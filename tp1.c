@@ -51,6 +51,39 @@ int leer_entrada(int input_fd, char* buffer, int bytes) {
 	return bytes;
 }
 
+void b64_decode(char *in, char *out){
+		char encoded[4] ={0};
+		int i;
+		int l;
+		
+		for (i = 0;i<4;++i){
+			for (l = 0; l<64;++l){
+					if (in[i] == letters_table[l]){
+						encoded[i] = l;
+						break;
+					}
+			}
+		}
+		
+		out[0] = (encoded[0] << 2) + ((encoded[1] & 0x30) >> 4);
+		out[1] = ((encoded[1] & 0xf) << 4) + ((encoded[2] & 0x3c) >> 2);
+		out[2] = ((encoded[2] & 0x3) << 6) + encoded[3];
+}
+
+void b64_encode(char *in, char *out){
+	char decoded[4] = {0};
+	
+	decoded[0] = in[0] >> 2;
+	decoded[1] = ((in[0] % 4) << 4) | (in[1] >> 4);
+	decoded[2] = ((in[1] % 16) << 2) | (in[2] >> 6);
+	decoded[3] = in[2] % 64;
+
+	out[0] = letters_table[(int) decoded[0]];
+	out[1] = letters_table[(int) decoded[1]];
+	out[2] = letters_table[(int) decoded[2]];
+	out[3] = letters_table[(int) decoded[3]];
+}
+
 int main(int argc, char* argv[]){
 	
 	bool help, version, output, input, decode; //posibles opciones
@@ -120,15 +153,16 @@ int main(int argc, char* argv[]){
 		bytesALeerMax= 4; //El decode hace de 4 bytes, 3 nuevos
 	else
 		bytesAEscribirMax = 4; //Si es encode (not decode), hace 4 bytes de 3 originales
-		
-	while (!bytesPendientes && !fin){
+	bool fin = false;
+	
+	while (!bytesPendientes && !fin){ //
 	
 			char entrada[4] = {0};
 			char salida[4] = {0};
 			
 			//Leo los bytes
 			bytesPendientes = leer_entrada(fd_input,entrada,bytesALeerMax); //Me guardo en entrada, los 4 bytes
-			if (bytesPendientes = bytesALeerMax){ //Se terminó el archivo (no disminuyó con el --)
+			if (bytesPendientes == bytesALeerMax){ //Se terminó el archivo (no disminuyó con el --)
 				bytesPendientes=0;
 				break; //Salgo
 			}	
@@ -140,22 +174,22 @@ int main(int argc, char* argv[]){
 			}
 			int aEscribir = bytesAEscribirMax - bytesPendientes - decode * padding; //if decode = false -> no suma el padding
 			
-			bool fin = false;
-			if (input[3] == '=')
+			if (entrada[3] == (char)'=')
 				fin = true;
 			
 			if (decode)
-				decode(entrada,salida); //Llamada a decode
+				b64_decode(entrada,salida); //Llamada a decode
 			else
-				encode(entrada,salida); //Llamada a encode
+				b64_encode(entrada,salida); //Llamada a encode
 				
 			//Ahora, escribo lo que me dejó en salida
 			
 			write(fd_output,salida,aEscribir);
 	}
 	
+	char symbol = '=';
 	while(bytesPendientes--)
-		write(fd_output,'=',1); //Relleno con = lo que falte
+		write(fd_output,&symbol,1); //Relleno con = lo que falte
 	
 	close(fd_input);
 	close(fd_output);
