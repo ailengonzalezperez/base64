@@ -1,0 +1,1 @@
+echo Cada vez ire sintiendo menos y recordando mas, pero que es el recuerdo sino el idioma de los sentimientos, un diccionario de caras y dias y perfumes que vuelven como los verbos y los adjetivos en el discurso.| ./base64

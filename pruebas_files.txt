@@ -1,0 +1,6 @@
+./tp0 -i dText1.txt
+./tp0 -i eText1.txt -a decode
+./tp0 -i dText2.txt -o prueba3.txt
+./tp0 -i eText2.txt -a decode -o prueba4.txt
+echo Man | ./tp0 -o prueba5.txt
+echo TWFu | ./tp0 -a decode -o prueba6.txt
