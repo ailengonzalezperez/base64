@@ -1,4 +1,4 @@
-//#include "base64.h"
+#include "base64.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -20,7 +20,7 @@ char letters_table[64] = {
   '4', '5', '6', '7', '8', '9', '+', '/'
 };
 
-void show_help(){
+/*void show_help(){
 		printf("Usage: \n \
 		tp0 -h \n \
 		tp0 -V \n \
@@ -34,16 +34,16 @@ void show_help(){
 		Examples:\n \
 		tp0 -a encode -i ~/input -o ~/output\n \
 		tp0 -a decode \n");
-}
+}*/
 
-void show_version(){
+/*void show_version(){
 	printf("Organizacion de Computadoras - TP0 \n \
 			Encoder/Decoder Base64 - v2.0 \n \
 			Group Members:\n \
 			Gonzalez Perez, Ailen Padron: 97043\n \
 			Mariotti, Maria Eugenia Padron: 96260\n \
 			Raña, Cristian Ezequiel Padron: 95457\n");
-}
+}*/
 
 int leer_entrada(int input_fd, char* buffer, int bytes) {
 	while (read(input_fd, buffer, 1) && --bytes) 
